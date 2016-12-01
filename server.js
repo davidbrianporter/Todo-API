@@ -1,19 +1,11 @@
 var express = require('express');
+var bodyParser = require('body-parser');
 var app = express();
 var PORT = process.env.PORT || 3000;
-var todos = [{
-  id: 1,
-  description: 'Meet friend for lunch',
-  completed: false
-}, {
-  id: 2,
-  description: 'Go to grocery store',
-  completed: false
-}, {
-  id: 3,
-  description: 'Get new job',
-  completed: true
-}];
+var todos = [];
+var todoNextId = 1;
+
+app.use(bodyParser.json());
 
 //app.* is the instance of express get is the HTTP request method
 // When the / route is matched the res handler function is called
@@ -43,6 +35,15 @@ app.get('/todos/:id', function (req, res) {
     } else {
       res.status(404).send();
     }
+});
+
+// POST /todos
+app.post('/todos', function (req, res) {
+    var body = req.body;
+    body.id = todoNextId++;
+
+    todos.push(body);
+    res.json(body);
 });
 
 app.listen(PORT, function () {
